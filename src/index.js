@@ -1,26 +1,30 @@
 /* ───────────────  IMPORTS  ─────────────── */
-import express from 'express';
-import dotenv  from 'dotenv';
-import fs      from 'fs';
-import swaggerUi from 'swagger-ui-express';
+import express       from 'express';
+import dotenv        from 'dotenv';
+import fs            from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import swaggerUi     from 'swagger-ui-express';
 
 /* Rutas */
-import usersRouter     from './routes/usuarios.js';
-import devicesRouter   from './routes/dispositivos.js';
-import sessionsRouter  from './routes/sesiones.js';
-import eventsRouter    from './routes/eventos.js';
-import pointsRouter    from './routes/puntos.js';
-import alarmsRouter    from './routes/alarmas.js';
+import usersRouter    from './routes/usuarios.js';
+import devicesRouter  from './routes/dispositivos.js';
+import sessionsRouter from './routes/sesiones.js';
+import eventsRouter   from './routes/eventos.js';
+import pointsRouter   from './routes/puntos.js';
+import alarmsRouter   from './routes/alarmas.js';
 
 /* ───────────────  CONFIG BÁSICA  ─────────────── */
-dotenv.config();                 // carga .env
+dotenv.config();                          // carga variables .env
 const app = express();
-app.use(express.json());         // parsea JSON
+app.use(express.json());                  // parsea JSON
 
 /* ───────────────  SWAGGER DOCS  ─────────────── */
-const swaggerDocument = JSON.parse(
-  fs.readFileSync(new URL('../swagger.json', import.meta.url))
-);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+// Ajusta la ruta según dónde esté swagger.json respecto a src/index.js
+const swaggerPath = join(__dirname, '..', 'swagger.json');
+const swaggerDocument = JSON.parse(fs.readFileSync(swaggerPath, 'utf8'));
+
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 /* ───────────────  RUTAS  ─────────────── */
@@ -38,7 +42,7 @@ app.use((err, _req, res, _next) => {
 });
 
 /* ───────────────  ARRANQUE  ─────────────── */
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080;    // Render define PORT
 app.listen(PORT, () =>
   console.log(`🚀 API escuchando en http://localhost:${PORT}`)
 );
