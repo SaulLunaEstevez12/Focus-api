@@ -1,0 +1,587 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FocusAPI - Concentraci\u00f3n y sensores",
+    "version": "1.0.0",
+    "description": "API para controlar dispositivos de concentraci\u00f3n con sensores y recompensas"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api"
+    }
+  ],
+  "paths": {
+    "/usuarios/register": {
+      "post": {
+        "summary": "Registrar nuevo usuario",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nombre",
+                  "correo",
+                  "password"
+                ],
+                "properties": {
+                  "nombre": {
+                    "type": "string"
+                  },
+                  "correo": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario creado y token generado"
+          },
+          "400": {
+            "description": "Error de validaci\u00f3n"
+          }
+        }
+      }
+    },
+    "/usuarios/login": {
+      "post": {
+        "summary": "Login de usuario",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "correo",
+                  "password"
+                ],
+                "properties": {
+                  "correo": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Token v\u00e1lido devuelto"
+          },
+          "400": {
+            "description": "Credenciales inv\u00e1lidas"
+          }
+        }
+      }
+    },
+    "/dispositivos": {
+      "get": {
+        "summary": "Obtener todos los dispositivos",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de dispositivos"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear nuevo dispositivo",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "tipo"
+                ],
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "enum": [
+                      "collar",
+                      "pulsera",
+                      "otro"
+                    ]
+                  },
+                  "descripcion": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dispositivo creado"
+          }
+        }
+      }
+    },
+    "/dispositivos/{id}": {
+      "get": {
+        "summary": "Obtener dispositivo por ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dispositivo encontrado"
+          },
+          "404": {
+            "description": "Dispositivo no encontrado"
+          }
+        }
+      },
+      "put": {
+        "summary": "Actualizar dispositivo por ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tipo": {
+                    "type": "string",
+                    "enum": [
+                      "collar",
+                      "pulsera",
+                      "otro"
+                    ]
+                  },
+                  "descripcion": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dispositivo actualizado"
+          },
+          "404": {
+            "description": "Dispositivo no encontrado"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar dispositivo por ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Dispositivo eliminado"
+          },
+          "404": {
+            "description": "Dispositivo no encontrado"
+          }
+        }
+      }
+    },
+    "/sesiones": {
+      "post": {
+        "summary": "Iniciar sesi\u00f3n de concentraci\u00f3n",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "dispositivoId"
+                ],
+                "properties": {
+                  "dispositivoId": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sesi\u00f3n iniciada"
+          },
+          "400": {
+            "description": "Error de validaci\u00f3n"
+          }
+        }
+      },
+      "get": {
+        "summary": "Obtener sesiones activas",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de sesiones activas"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Actualizar sesi\u00f3n de concentraci\u00f3n",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sesionId",
+                  "estado"
+                ],
+                "properties": {
+                  "sesionId": {
+                    "type": "integer"
+                  },
+                  "estado": {
+                    "type": "string",
+                    "enum": [
+                      "activo",
+                      "completado",
+                      "cancelado"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sesi\u00f3n actualizada"
+          },
+          "404": {
+            "description": "Sesi\u00f3n no encontrada"
+          }
+        }
+      }
+    },
+    "/eventos": {
+      "get": {
+        "summary": "Obtener eventos de concentraci\u00f3n",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de eventos"
+          }
+        }
+      },
+      "post": {
+        "summary": "Crear nuevo evento de concentraci\u00f3n",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "nombre",
+                  "fecha"
+                ],
+                "properties": {
+                  "nombre": {
+                    "type": "string"
+                  },
+                  "fecha": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Evento creado"
+          }
+        }
+      }
+    },
+    "/usuarios/{id}/puntos": {
+      "get": {
+        "tags": [
+          "Puntos"
+        ],
+        "summary": "Ver historial de puntos del usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "desde",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Historial de puntos",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id_puntos": 1,
+                    "id_usuario": 1,
+                    "puntos_ganados": 50,
+                    "motivo": "Pomodoro exitoso",
+                    "fecha": "2025-06-25T14:22:00Z"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Puntos"
+        ],
+        "summary": "Agregar puntos a un usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "puntos": 25,
+                "motivo": "Sesi\u00f3n completada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Puntos asignados",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id_puntos": 3,
+                  "id_usuario": 1,
+                  "puntos_ganados": 25,
+                  "motivo": "Sesi\u00f3n completada",
+                  "fecha": "2025-06-26T15:00:00Z"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usuarios/{id}/alarmas": {
+      "get": {
+        "tags": [
+          "Alarmas"
+        ],
+        "summary": "Ver configuraci\u00f3n de alarmas de un usuario",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Configuraci\u00f3n de alarmas",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id_alarma": 1,
+                  "id_usuario": 1,
+                  "inactividad_minutos": 10,
+                  "inclinacion_grados": 25,
+                  "activar_sonido": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Alarmas"
+        ],
+        "summary": "Actualizar configuraci\u00f3n de alarmas",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "inactividad_minutos": 15,
+                "inclinacion_grados": 30,
+                "activar_sonido": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Alarma actualizada",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id_alarma": 1,
+                  "id_usuario": 1,
+                  "inactividad_minutos": 15,
+                  "inclinacion_grados": 30,
+                  "activar_sonido": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
