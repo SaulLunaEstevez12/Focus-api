@@ -27,6 +27,8 @@ r.post('/register',
                 OUTPUT inserted.id_usuario
                 VALUES (@nombre,@correo,@pass);`);
       const id = rs.recordset[0].id_usuario;
+      console.log('ID generado:', id);
+      console.log('JWT_SECRET:', process.env.JWT_SECRET);
       res.status(201).json({ token: generarToken(id) });
     } catch (e) { next(e); }
   });
